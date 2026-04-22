@@ -97,7 +97,7 @@ body {
     background: transparent;
     border: none;
     color: var(--color-dev);
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     cursor: pointer;
     transition: color 0.2s;
     font-weight: 500;
@@ -346,7 +346,7 @@ body {
     min-height: 18px !important;
     height: auto !important;
     /* 렌더링 찌그러짐을 막기 위해 브라우저 엔진에 높이 재량권 부여 */
-    font-size: 11px !important;
+    font-size: 7px !important;
     color: white !important;
     margin-bottom: 2px !important;
     border-radius: 4px !important;
@@ -384,14 +384,14 @@ body {
 }
 
 #subCalendar .event-title {
-    font-size: 0.75rem !important;
+    font-size: 7px !important;
     /* 높이 감소에 따른 폰트 축소 방지 */
     line-height: 1.1 !important;
 }
 
 #subCalendar .event-badge {
     padding: 1px 3px !important;
-    font-size: 0.6rem !important;
+    font-size: 0.55rem !important;
     /* 뱃지 크기 비례 동기화 */
     line-height: 1 !important;
 }
@@ -517,7 +517,7 @@ body {
 }
 
 .custom-event .event-title {
-    font-size: 14px !important;
+    font-size: 7px !important;
     font-weight: normal;
     white-space: normal;
     line-height: 1;
@@ -569,7 +569,8 @@ body {
 
 .modal-header h3 {
     font-family: var(--font-heading);
-    font-size: 1.25rem;
+    font-size: 1.4rem;
+    font-weight: 700;
 }
 
 .close-btn {
@@ -587,6 +588,25 @@ body {
 
 .form-group {
     margin-bottom: 1.2rem;
+    position: relative;
+}
+
+/* 체크박스 정렬을 위한 헬퍼 클래스 */
+.important-toggle, #ongoingContainer {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    cursor: pointer;
+    margin-top: 5px;
+    font-size: 0.9rem !important;
+    width: fit-content;
+}
+
+.important-toggle input, #ongoingContainer input {
+    width: 18px !important;
+    height: 18px !important;
+    cursor: pointer;
+    background: transparent !important;
 }
 
 .form-row {
@@ -605,7 +625,7 @@ body {
     color: var(--text-secondary);
 }
 
-.form-group input,
+.form-group input:not([type="checkbox"]),
 .form-group select,
 .form-group textarea {
     width: 100%;
@@ -615,6 +635,7 @@ body {
     border-radius: 8px;
     color: white;
     font-family: var(--font-sans);
+    font-size: 0.95rem;
     outline: none;
     transition: border-color 0.2s;
 }
@@ -694,7 +715,7 @@ body {
     text-overflow: clip !important;
     /* 말줄임표조차 생략하고 강제 노출 */
     white-space: nowrap !important;
-    font-size: 11px !important;
+    font-size: 7px !important;
     line-height: normal !important;
     color: white !important;
     font-weight: bold !important;
@@ -722,7 +743,7 @@ body {
 
 /* 상세 내용 전용 축소 폰트 */
 .event-desc-text {
-    font-size: 13px !important;
+    font-size: 8px !important;
     opacity: 0.8 !important;
     font-weight: normal !important;
 }

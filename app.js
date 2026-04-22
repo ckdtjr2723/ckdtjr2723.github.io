@@ -648,8 +648,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     eventForm.addEventListener('submit', function(e) {
         e.preventDefault();
+        console.log("💾 일정 저장 프로세스 시작...");
         
-        const title = document.getElementById('eventTitle').value.trim();
+        try {
+            const title = document.getElementById('eventTitle').value.trim();
         const start = document.getElementById('eventStart').value;
         const end = document.getElementById('eventEnd').value;
         const project = document.getElementById('eventProject').value;
@@ -698,13 +700,15 @@ document.addEventListener('DOMContentLoaded', function() {
             borderColor: finalBgColor
         };
 
-        if (isFirebaseActive) {
+        if (isFirebaseActive && db) {
+            console.log(`📡 Firebase [${collectionName}]에 데이터 전송 중...`);
             if (id) {
                 db.collection(collectionName).doc(id).update(newEventData);
             } else {
                 db.collection(collectionName).add(newEventData);
             }
         } else {
+            console.log("💾 로컬 모드 (LocalStorage) 데이터 저장 중...");
             if (id) {
                 const event = targetCalInstance.getEventById(id);
                 if(event) {
@@ -718,7 +722,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     event.setExtendedProp('isOngoing', isOngoing);
                     event.setExtendedProp('isImportant', isImportant);
                     event.setExtendedProp('eventTime', eventTime);
-                    // 모든 캘린더(메인/서브) 공통: 세련된 중립 배경색 유지 (지시바/뱃지 디자인용)
                     event.setProp('backgroundColor', 'rgba(51, 65, 85, 0.8)');
                     event.setProp('borderColor', 'rgba(51, 65, 85, 0.8)');
                 }
@@ -731,10 +734,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const pendingMtxId = document.getElementById('pendingMatrixId').value;
         if (pendingMtxId && window.deleteMatrixTask) {
-            window.deleteMatrixTask(pendingMtxId, true); // 드롭 소스 최종 클리어
+            window.deleteMatrixTask(pendingMtxId, true);
         }
 
+        console.log("✅ 저장 완료 및 모달 닫기");
         closeEventModal();
+
+        } catch (error) {
+            console.error("❌ 일정 저장 중 에러 발생:", error);
+            alert("일정 저장 중 오류가 발생했습니다. 브라우저 콘솔을 확인해 주세요.");
+        }
     });
 
     deleteBtn.addEventListener('click', () => {
@@ -872,10 +881,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    document.getElementById('manageProjectsBtn').addEventListener('click', () => {
-        renderProjectEditList();
-        projModal.classList.remove('hidden');
-    });
+    // 명칭 편집 버튼 안정성 보강
+    const manageBtn = document.getElementById('manageProjectsBtn');
+    if (manageBtn) {
+        manageBtn.addEventListener('click', () => {
+            console.log("명칭 편집 버튼 클릭됨");
+            renderProjectEditList();
+            projModal.classList.remove('hidden');
+        });
+    } else {
+        console.error("명칭 편집 버튼(manageProjectsBtn)을 찾을 수 없습니다.");
+    }
 
     document.getElementById('addNewProjectBtn').addEventListener('click', () => {
         const newId = 'proj_' + Math.random().toString(36).substr(2, 9); // 파이어베이스 안전한 랜덤아이디
