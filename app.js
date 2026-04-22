@@ -646,7 +646,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    eventForm.addEventListener('submit', function(e) {
+    eventForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         console.log("💾 일정 저장 프로세스 시작...");
         
@@ -708,9 +708,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isFirebaseActive && db) {
             console.log(`📡 Firebase [${collectionName}]에 데이터 전송 중...`);
             if (id) {
-                db.collection(collectionName).doc(id).update(newEventData);
+                await db.collection(collectionName).doc(id).update(newEventData);
             } else {
-                db.collection(collectionName).add(newEventData);
+                await db.collection(collectionName).add(newEventData);
             }
         } else {
             console.log("💾 로컬 모드 (LocalStorage) 데이터 저장 중...");

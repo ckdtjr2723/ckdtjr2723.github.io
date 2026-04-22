@@ -346,7 +346,7 @@ body {
     min-height: 18px !important;
     height: auto !important;
     /* 렌더링 찌그러짐을 막기 위해 브라우저 엔진에 높이 재량권 부여 */
-    font-size: 8.5px !important;
+    font-size: 11px !important;
     color: white !important;
     margin-bottom: 2px !important;
     border-radius: 4px !important;
@@ -384,14 +384,14 @@ body {
 }
 
 #subCalendar .event-title {
-    font-size: 8.5px !important;
+    font-size: 11px !important;
     /* 높이 감소에 따른 폰트 축소 방지 */
     line-height: 1.1 !important;
 }
 
 #subCalendar .event-badge {
     padding: 1px 3px !important;
-    font-size: 7.5px !important;
+    font-size: 10px !important;
     /* 뱃지 크기 비례 동기화 */
     line-height: 1 !important;
 }
@@ -517,7 +517,7 @@ body {
 }
 
 .custom-event .event-title {
-    font-size: 8.5px !important;
+    font-size: 11px !important;
     font-weight: normal;
     white-space: normal;
     line-height: 1;
@@ -548,8 +548,8 @@ body {
 }
 
 .modal {
-    width: 440px;
-    padding: 1.2rem;
+    width: 460px;
+    padding: 1rem 1.2rem;
     transform: translateY(0);
     transition: transform 0.3s ease;
     max-height: 90vh;
@@ -587,7 +587,7 @@ body {
 }
 
 .form-group {
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.6rem;
     position: relative;
 }
 
@@ -620,8 +620,8 @@ body {
 
 .form-group label {
     display: block;
-    margin-bottom: 0.5rem;
-    font-size: 0.85rem;
+    margin-bottom: 0.3rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
 }
 
@@ -631,7 +631,7 @@ body {
     width: 100%;
     background: rgba(0, 0, 0, 0.2);
     border: 1px solid var(--glass-border);
-    padding: 0.75rem 1rem;
+    padding: 0.6rem 0.8rem;
     border-radius: 8px;
     color: white;
     font-family: var(--font-sans);
@@ -715,7 +715,7 @@ body {
     text-overflow: clip !important;
     /* 말줄임표조차 생략하고 강제 노출 */
     white-space: nowrap !important;
-    font-size: 8.5px !important;
+    font-size: 11px !important;
     line-height: normal !important;
     color: white !important;
     font-weight: bold !important;
@@ -728,7 +728,7 @@ body {
 
 .event-badge {
     flex-shrink: 0;
-    font-size: 8px !important;
+    font-size: 10px !important;
     padding: 0 5px !important;
     border-radius: 3px !important;
     background: rgba(255, 255, 255, 0.3) !important;
@@ -743,7 +743,7 @@ body {
 
 /* 상세 내용 전용 축소 폰트 */
 .event-desc-text {
-    font-size: 8.5px !important;
+    font-size: 11px !important;
     opacity: 0.8 !important;
     font-weight: normal !important;
 }
