@@ -1,0 +1,1046 @@
+/* CSS Variables 및 테마 초기화 */
+:root {
+    --fc-now-indicator-color: #c0c0c0; /* 차분하고 세련된 은색(Silver) 적용 (메인 달력과 동기화) */
+    --bg-dark: #0f172a;
+    --bg-darker: #020617;
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+
+    --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    --accent-hover: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+
+    --color-dev: #3b82f6;
+    --color-design: #ec4899;
+    --color-marketing: #10b981;
+    --color-issue: #ef4444;
+
+    --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+    --font-heading: 'Pretendard', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-darker);
+    background-image:
+        radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.15), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.15), transparent 25%);
+    color: var(--text-primary);
+    line-height: 1.5;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* 주요 레이아웃 */
+.app-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* 사이드바 */
+.sidebar {
+    width: 290px;
+    background: var(--bg-dark);
+    border-right: 1px solid var(--glass-border);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    z-index: 10;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--accent-gradient);
+}
+
+.brand h1 {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.2rem;
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 0.5rem;
+}
+
+.filter-header h3 {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.text-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-dev);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: color 0.2s;
+    font-weight: 500;
+}
+
+.text-btn:hover {
+    color: white;
+}
+
+.project-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* 커스텀 동적 체크박스 */
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    user-select: none;
+    transition: opacity 0.2s;
+}
+
+.custom-checkbox:hover {
+    opacity: 0.8;
+}
+
+.custom-checkbox input {
+    display: none;
+}
+
+.checkmark {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    position: relative;
+    border: 2px solid var(--text-secondary);
+    transition: all 0.2s;
+}
+
+.custom-checkbox input:checked+.checkmark {
+    background-color: var(--checked-bg);
+    border-color: transparent;
+}
+
+.custom-checkbox input:checked+.checkmark::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 5px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* 버튼 스타일 */
+.btn-primary {
+    background: var(--accent-gradient);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.875rem 1rem;
+    font-weight: 600;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.btn-danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--color-issue);
+    border: 1px solid var(--color-issue);
+    border-radius: 8px;
+    padding: 0.875rem 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-danger:hover {
+    background: var(--color-issue);
+    color: white;
+}
+
+/* 메인 컨텐츠 영역 */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+.top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.top-nav h2 {
+    font-family: var(--font-heading);
+    font-size: 1.75rem;
+}
+
+.user-profile img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--text-secondary);
+}
+
+/* 글래스 패널 */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.calendar-wrapper {
+    height: auto !important;
+    min-height: max-content !important;
+    /* 내부 캘린더(표)가 늘어나는 만큼 테두리도 무조건 끝까지 100% 동기화 팽창 */
+    padding: 1.5rem;
+    display: block;
+    margin-bottom: 1.5rem;
+    flex-shrink: 0;
+    /* 상위 레이아웃 Flex 환경에서 테두리 껍데기가 강제로 수축당해 잘리는 버그 원천 차단 */
+}
+
+#calendar {
+    height: auto !important;
+    color: var(--text-primary);
+}
+
+/* 월간 뷰(Month)에서도 주간/목록 뷰처럼 큼직하고 넉넉한 크기를 가져 사이트 전체 스크롤이 자연스럽게 생기도록 셀 최소 높이 강제 보장 */
+#calendar .fc-daygrid-day-frame {
+    min-height: 130px !important;
+}
+
+.sub-calendar-wrapper {
+    flex: 0 0 450px;
+    /* 월간 요약 캘린더 높이 450px로 증대 수정 */
+    height: 450px;
+    /* 명시적 높이 지정 */
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* 캘린더 명칭 변경 (4번 요건 반영) */
+#calendar .fc-toolbar-chunk:first-child::before {
+    content: "📌 캘린더";
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-right: 1.5rem;
+    vertical-align: middle;
+}
+
+#subCalendar .fc-toolbar-chunk:first-child::before {
+    content: "📊 월간 요약 캘린더";
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    vertical-align: middle;
+}
+
+/* 캘린더 내부 조작 버튼 크기를 줄여 헤더 공간 효율성 극대화 */
+.fc-theme-standard .fc-button {
+    padding: 0.25em 0.5em !important;
+    font-size: 0.8rem !important;
+}
+
+.fc-header-toolbar {
+    margin-bottom: 0.8rem !important;
+}
+
+/* 3. 보조 캘린더 프로젝트별 표 최소 규격 균일화 (내부 콘텐츠 팽창 시 좌/우 동기화 엔진 허용) */
+#subCalendar .fc-timeline-lane,
+#subCalendar .fc-datagrid-cell {
+    /* 캘린더 내장 Javascript 렌더링 엔진과 충돌하여 스크롤 렉(버벅임) 및 가로줄 어긋남을 유발하던 높이 강제 제약(!important) 전면 폐기 */
+    vertical-align: middle !important;
+}
+
+/* 보조 캘린더 프로젝트 열 텍스트 "단일 스크롤 및 팽창 상황에서도" 무조건 수직/수평 정중앙 정렬 보장 */
+#subCalendar .fc-datagrid-cell-frame {
+    /* 불필요한 100% 강제 확장을 제거하여 렌더링 렉 무한루프 충돌 원천 차단 */
+    justify-content: center !important;
+    align-items: center !important;
+    display: flex !important;
+}
+
+#subCalendar .fc-datagrid-cell-cushion {
+    width: 100% !important;
+    text-align: center !important;
+    margin: 0 !important;
+    padding-top: 15px !important;
+    /* 빈 프로젝트 칸이 과도하게 뚱뚱해 보이지 않도록 기본 여백을 15px로 대폭 축소하여 일정 개수에 비례한 다이나믹 높이 지원 */
+    padding-bottom: 15px !important;
+}
+
+/* 2. 월 아래 위치한 의미 없는 공백 칸(일자 헤더의 흔적) 행 완전 삭제 */
+/* 주의: 좌/우측 표의 헤더 막내 행을 '동시에 통째로' 숨겨야만 가로선 어긋남 버그를 치명적으로 막을 수 있음! */
+#subCalendar .fc-datagrid-header tr:last-child,
+#subCalendar .fc-timeline-header-row:last-child {
+    display: none !important;
+}
+
+/* 6. 헤더 영역(월 표시 및 요일)의 색깔을 일정 기입 칸과 미묘하게 분리시켜 주/보조 캘린더 색상 분리 */
+.fc-col-header-cell,
+.fc-timeline-header-row th,
+.fc-datagrid-header th {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.fc-theme-standard th {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 주/보조 캘린더 막대기 크기 18px 및 텍스트 이탈 방지 */
+#calendar .fc-event,
+#subCalendar .fc-event {
+    padding: 0 4px !important;
+    min-height: 18px !important;
+    height: auto !important;
+    /* 렌더링 찌그러짐을 막기 위해 브라우저 엔진에 높이 재량권 부여 */
+    font-size: 11px !important;
+    color: white !important;
+    margin-bottom: 2px !important;
+    border-radius: 4px !important;
+    border: none !important;
+    overflow: visible !important;
+    /* 브라우저 자체 클리핑 결함 완전 해방 */
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* 내부 프레임들 높이 15px에 100% 동기화 */
+#calendar .fc-event-main,
+#subCalendar .fc-event-main,
+.fc-event-main-frame {
+    display: flex !important;
+    flex-direction: row !important;
+    /* 가로 배열 절대 보장 */
+    align-items: center !important;
+    min-height: 18px !important;
+    height: auto !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+#subCalendar {
+    flex: 1;
+    color: var(--text-primary);
+}
+
+/* 서브 캘린더 스케줄(막대기) 사이즈 초정밀 압축 (15px) */
+#subCalendar .fc-event {
+    padding: 1px 4px !important;
+    min-height: 18px !important;
+}
+
+#subCalendar .event-title {
+    font-size: 0.75rem !important;
+    /* 높이 감소에 따른 폰트 축소 방지 */
+    line-height: 1.1 !important;
+}
+
+#subCalendar .event-badge {
+    padding: 1px 3px !important;
+    font-size: 0.6rem !important;
+    /* 뱃지 크기 비례 동기화 */
+    line-height: 1 !important;
+}
+
+/* 삭제됨: 일자(Day) 숨김 CSS 훅은 slotDuration: months 구조체로 완전히 흡수되어 네이티브로 정렬되므로 JS/CSS 강제 정렬 불필요 */
+
+/* 최상단(연도) 및 중간(월) 헤더 텍스트 보장 및 폰트 사이즈 3pt 축소 */
+#subCalendar .fc-timeline-header-row .fc-timeline-slot-cushion {
+    color: var(--text-primary) !important;
+    font-weight: bold;
+    font-size: 0.75rem !important;
+    /* 주 캘린더 대비 약 3pt(0.25rem) 축소 */
+}
+
+/* 타임라인 하단 가로 스크롤바 물리적 시각 제거 (마우스 휠이나 트랙패드 등을 활용한 스크롤 행위 자체 정상 작동) */
+#subCalendar .fc-scroller::-webkit-scrollbar {
+    display: none !important;
+    height: 0px !important;
+    width: 0px !important;
+}
+
+#subCalendar .fc-scroller {
+    -ms-overflow-style: none;
+    /* IE/Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.fc-theme-standard td,
+.fc-theme-standard th,
+.fc-theme-standard .fc-scrollgrid {
+    border-color: var(--glass-border) !important;
+    background: transparent !important;
+}
+
+/* 타임라인 헤더 등에서 발생하는 강제 흰 배경 차단 */
+.fc-timeline-header-row,
+.fc-datagrid-header,
+.fc .fc-scrollgrid-section-header>* {
+    background-color: transparent !important;
+}
+
+/* 무료 라이선스 사용 시 나타나는 하단 워터마크 숨김 */
+.fc-license-message {
+    display: none !important;
+}
+
+.fc-header-toolbar {
+    margin-bottom: 1.5rem !important;
+}
+
+.fc-toolbar-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+}
+
+.fc-button-primary {
+    background: var(--bg-dark) !important;
+    border: 1px solid var(--glass-border) !important;
+    color: var(--text-primary) !important;
+    text-transform: capitalize !important;
+    border-radius: 6px !important;
+    transition: all 0.2s !important;
+}
+
+.fc-button-primary:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.fc-button-primary:not(:disabled).fc-button-active {
+    background: var(--accent-gradient) !important;
+    border-color: transparent !important;
+}
+
+.fc-day-today {
+    background: rgba(59, 130, 246, 0.1) !important;
+}
+
+/* 가독성을 위한 이벤트 간 간격 추가 */
+.fc-daygrid-event-harness {
+    margin-bottom: 2px !important;
+}
+
+.fc-daygrid-day-frame {
+    min-height: 130px !important;
+}
+
+.fc-event {
+    cursor: pointer;
+    border: none !important;
+    border-radius: 6px;
+    padding: 2px !important;
+    transition: transform 0.2s;
+    overflow: hidden;
+}
+
+.fc-event:hover {
+    transform: scale(1.02);
+    z-index: 5;
+}
+
+/* 캘린더 내부 이벤트 커스텀 구성 스타일 */
+.custom-event {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--font-sans);
+    padding: 2px;
+}
+
+.custom-event .event-badge {
+    background: rgba(255, 255, 255, 0.25);
+    color: white;
+    font-size: 14px !important;
+    font-weight: 500;
+    padding: 1px 8px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.custom-event .event-title {
+    font-size: 14px !important;
+    font-weight: normal;
+    white-space: normal;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+}
+
+
+/* 모달 스타일 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal {
+    width: 440px;
+    padding: 2rem;
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-overlay.hidden .modal {
+    transform: translateY(20px);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-header h3 {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+}
+
+.close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: white;
+}
+
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    color: white;
+    font-family: var(--font-sans);
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+/* 네이티브 select option 다크모드 대응 (OS 기본 하얀색 팝업에서 흰 글씨가 보이지 않는 현상 방지) */
+.form-group select option,
+#matrixQuadrantSelect option,
+#eventTargetCalendar option,
+#eventType option,
+#eventProject option {
+    background-color: #1e293b;
+    color: white;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--color-dev);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.form-group-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 1.5rem;
+}
+
+.proj-edit-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.proj-edit-item span.color-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* 18px 기본 높이에 맞게 내부 컨텐츠 가로 정렬 및 모든 제약 해제 */
+.custom-event {
+    display: flex !important;
+    flex-direction: row !important;
+    /* 가로 배열 절대 보장 */
+    align-items: center !important;
+    gap: 5px;
+    width: 100%;
+    min-height: 18px !important;
+    height: auto !important;
+    /* 부모 크기에 유연하게 동기화 */
+    overflow: visible !important;
+    /* 무조건 텍스트 렌더링 노출 강제 */
+    white-space: nowrap;
+}
+
+.event-title {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    overflow: visible !important;
+    /* 어떤 상황에서도 글자 짤림 방지 */
+    text-overflow: clip !important;
+    /* 말줄임표조차 생략하고 강제 노출 */
+    white-space: nowrap !important;
+    font-size: 11px !important;
+    line-height: normal !important;
+    color: white !important;
+    font-weight: bold !important;
+    /* 디버깅 차원에서 굵게 표시하여 강제 확인 */
+    margin: 0 !important;
+    padding: 0 !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+}
+
+.event-badge {
+    flex-shrink: 0;
+    font-size: 9.5px !important;
+    padding: 0 5px !important;
+    border-radius: 3px !important;
+    background: rgba(255, 255, 255, 0.3) !important;
+    color: white !important;
+    line-height: normal !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 15px !important;
+    margin: 0 !important;
+}
+
+/* 상세 내용 전용 축소 폰트 */
+.event-desc-text {
+    font-size: 13px !important;
+    opacity: 0.8 !important;
+    font-weight: normal !important;
+}
+
+/* 호버 시 상세 정보 노출 레이어 */
+.event-detail-group {
+    display: none;
+    align-items: center;
+}
+
+.fc-event:hover .event-detail-group {
+    display: inline-flex !important;
+}
+
+/* 서브 캘린더 전용: 왼쪽 색상 지시자(Indicator Bar) */
+.custom-event.has-indicator {
+    padding-left: 10px !important;
+    position: relative;
+}
+
+.event-color-indicator {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    border-radius: 4px 0 0 4px;
+    z-index: 2;
+}
+
+/* =========================================================================
+   아이젠하워 프리미엄 매트릭스 (Eisenhower Task Drawer - Premium UI)
+   ========================================================================= */
+
+.matrix-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
+}
+.matrix-overlay.active {
+    opacity: 1; 
+    visibility: visible;
+}
+
+.matrix-drawer {
+    position: fixed;
+    top: 0; right: -750px; /* 기존보다 훨씬 쾌적하게 폭 증가 */
+    width: 650px; 
+    height: 100vh;
+    z-index: 1001;
+    transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    padding: 2.5rem;
+    border-radius: 30px 0 0 30px;
+    box-sizing: border-box;
+    background: linear-gradient(145deg, rgba(20, 24, 39, 0.95), rgba(10, 13, 22, 0.98));
+    box-shadow: -15px 0 50px rgba(0, 0, 0, 0.8);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+.matrix-drawer.active {
+    right: 0;
+}
+
+.matrix-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;
+    flex-shrink: 0;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.matrix-header h3 { 
+    font-family: var(--font-heading); font-size: 1.6rem; color: #fff; margin: 0;
+    text-shadow: 0 2px 15px rgba(255, 255, 255, 0.2);
+    letter-spacing: 0.5px;
+}
+.close-btn {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    color: white; border-radius: 50%; width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 1.3rem; transition: all 0.3s ease;
+}
+.close-btn:hover { background: rgba(239, 68, 68, 0.8); border-color: rgba(239, 68, 68, 1); transform: rotate(90deg); }
+
+.matrix-input-area {
+    display: flex; gap: 12px; margin-bottom: 2rem; flex-shrink: 0;
+}
+.matrix-input-area input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    font-size: 0.95rem;
+    font-family: var(--font-sans);
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+.matrix-input-area input:focus {
+    border-color: var(--color-dev); background: rgba(255,255,255,0.08); outline: none; box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+}
+.matrix-input-area input::placeholder { color: rgba(255,255,255,0.3); }
+
+#matrixQuadrantSelect {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white; border-radius: 12px; padding: 0 1rem; height: 100%;
+    cursor: pointer; transition: all 0.3s;
+}
+#matrixQuadrantSelect:hover { background: rgba(255, 255, 255, 0.1); }
+
+#addMatrixTaskBtn {
+    background: var(--accent-gradient);
+    border: none; color: white; border-radius: 12px; padding: 0 1.5rem;
+    font-size: 1.2rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+}
+#addMatrixTaskBtn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6); }
+
+.matrix-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 20px;
+    overflow-y: hidden;
+}
+
+.quadrant {
+    border-radius: 20px; 
+    padding: 1.2rem;
+    display: flex; 
+    flex-direction: column; 
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.quadrant:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+
+.quadrant h4 { 
+    font-size: 0.9rem; margin: 0 0 15px 0; color: #fff; 
+    font-weight: 700; letter-spacing: 0.5px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding-bottom: 12px; border-bottom: 1px dashed rgba(255,255,255,0.15);
+}
+
+/* 4분면별 네온 글로우 파스텔 파트 */
+.q1 { background: linear-gradient(145deg, rgba(239, 68, 68, 0.12), rgba(0,0,0,0.2)); border-top: 4px solid #ef4444; }
+.q2 { background: linear-gradient(145deg, rgba(59, 130, 246, 0.12), rgba(0,0,0,0.2)); border-top: 4px solid #3b82f6; }
+.q3 { background: linear-gradient(145deg, rgba(245, 158, 11, 0.12), rgba(0,0,0,0.2)); border-top: 4px solid #f59e0b; }
+.q4 { background: linear-gradient(145deg, rgba(156, 163, 175, 0.12), rgba(0,0,0,0.2)); border-top: 4px solid #9ca3af; }
+
+.q1 h4 { text-shadow: 0 0 10px rgba(239, 68, 68, 0.6); }
+.q2 h4 { text-shadow: 0 0 10px rgba(59, 130, 246, 0.6); }
+.q3 h4 { text-shadow: 0 0 10px rgba(245, 158, 11, 0.6); }
+.q4 h4 { text-shadow: 0 0 10px rgba(156, 163, 175, 0.6); }
+
+.matrix-task-list {
+    flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 5px;
+}
+.matrix-task-list::-webkit-scrollbar { width: 5px; }
+.matrix-task-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 5px; }
+
+/* 직관적인 Draggable Item (포스트잇 스타일) */
+.matrix-item {
+    background: rgba(255, 255, 255, 0.08); 
+    backdrop-filter: blur(8px);
+    color: rgba(255, 255, 255, 0.95); 
+    padding: 12px 14px; 
+    border-radius: 12px; 
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: grab; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+}
+.matrix-item:hover { 
+    background: rgba(255, 255, 255, 0.18); 
+    transform: translateY(-3px) scale(1.02); 
+    border-color: rgba(255,255,255,0.3);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+}
+.matrix-item:active { cursor: grabbing; transform: translateY(0) scale(0.98); }
+
+/* FullCalendar Drag Mirror (고스트 엘리먼트) 퍼포먼스 최적화 - 복제 객체의 트랜지션을 차단하여 계산 렉 방지 */
+.fc-dragging {
+    transition: none !important;
+    transform: scale(1.05) !important;
+    opacity: 0.9 !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+    pointer-events: none !important;
+}
+
+.matrix-item-content { 
+    flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 10px; 
+}
+
+.matrix-item-delete { 
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
+    color: rgba(255,255,255,0.5); 
+    cursor: pointer; font-size: 0.85rem; padding: 6px; border-radius: 6px; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+    min-width: 28px;
+}
+.matrix-item-delete:hover { background: #ef4444; color: white; border-color: #ef4444; box-shadow: 0 0 10px rgba(239,68,68,0.4); }
+
+
+.matrix-footer-note {
+    margin-top: 1.5rem; padding: 1rem; text-align: center; font-size: 0.85rem; color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.2);
+    flex-shrink: 0; display: flex; justify-content: center; align-items: center; gap: 8px;
+}
+
+/* 메인 캘린더 일요일(Sunday) 빨간색 시각적 강조 */
+.fc-day-sun .fc-col-header-cell-cushion,
+.fc-day-sun .fc-daygrid-day-number {
+    color: #fca5a5 !important;
+}
+.fc-day-sun {
+    background-color: rgba(248, 113, 113, 0.04) !important;
+}
+
+/* 날짜 입력창(input type="date") 내장 달력 아이콘 색상 반전 (다크모드 시인성 확보) */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) opacity(0.6);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    filter: invert(1) opacity(1);
+}
+
+/* 오늘 날짜 현재 시점(Now Indicator) 시각적 가이드라인 (월간 요약 등 타임라인 뷰 전용) */
+.fc-now-indicator,
+.fc-now-indicator-line,
+.fc-timeline-now-indicator-line {
+    border-color: rgba(192, 192, 192, 0.75) !important; /* 투명도를 가미한 은색 선 */
+    border-width: 2px !important;
+    box-shadow: 0 0 6px rgba(192, 192, 192, 0.25); 
+}
+.fc-now-indicator-arrow,
+.fc-timeline-now-indicator-arrow {
+    border-width: 6px !important; 
+    border-top-color: rgba(192, 192, 192, 0.75) !important;
+    border-bottom-color: rgba(192, 192, 192, 0.75) !important;
+}
+
+/* 메인 캘린더 '오늘(Today)' 칸 전체 및 숫자에 대한 특별 테마 강조 */
+.fc-day-today {
+    background-color: rgba(192, 192, 192, 0.05) !important; /* 전체 칸 은은한 실버 틴트 */
+}
+
+/* 메인 캘린더 오늘 날짜 텍스트 뱃지화 (세련된 은색 빛깔 및 체크마크) */
+.fc-day-today .fc-daygrid-day-number {
+    background: #c0c0c0 !important; 
+    color: var(--bg-darker) !important; /* 은색 위에서는 어두운 글씨가 가독성이 좋음 */
+    border-radius: 6px;
+    padding: 2px 8px !important;
+    font-size: 0.85rem;
+    font-weight: 800;
+    margin: 4px; /* 우측 상단 여백 보정 */
+    box-shadow: 0 2px 6px rgba(192, 192, 192, 0.3); /* 포근한 은빛 글로우 */
+    display: inline-flex;
+    align-items: center;
+}
+
+/* 오늘 날짜 앞에 귀여운 별 모양 배지 강제 삽입 (검은색 테두리로 시인성 강화) */
+.fc-day-today .fc-daygrid-day-number::before {
+    content: "\f005"; /* FontAwesome 'fa-star' */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    color: #fbbf24; /* 귀엽고 따뜻한 노란색(골드) */
+    /* 뚜렷한 흑색 테두리 및 그림자 (별 모양이 배경에 묻히지 않게 완벽 분리) */
+    -webkit-text-stroke: 1px #111827; 
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    margin-right: 6px;
+    font-size: 0.95rem;
+}
+
+/* -----------------------------------------------------
+   [수정] 호버 팝아웃 완벽 겹침 방지 (스태킹 컨텍스트 탈출)
+   - FullCalendar는 부모 요소인 harness에서 z-index를 통제하므로, 
+     harness 전체를 최상단으로 올려야 뒤쪽 일정에 가려지지 않습니다.
+------------------------------------------------------ */
+.fc-timeline-event-harness:hover,
+.fc-daygrid-event-harness:hover {
+    z-index: 99999 !important;
+}
+
+.fc-event {
+    position: relative;
+    transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.2s; 
+}
+
+.fc-event:hover {
+    transform: scale(1.02); /* 아주 살짝 확대되어 가독성 확보 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* 그림자로 백그라운드와 분리 */
+}
+
+/* 부모 박스의 너비 제한을 폭파하고 내용물 길이만큼 배경색을 무조건 펼치는 완전한 팝아웃 효과 */
+.fc-event:hover .custom-event {
+    position: absolute; /* 이 속성이 핵심! 부모의 제약에서 벗어나 독립적인 레이어로 부상 */
+    top: -2px; /* 살짝 위로 띄워 그림자 시각화 */
+    left: 0;
+    width: max-content !important; /* 글씨 끝까지 배경 상자를 강제 확장 */
+    min-width: 100%; /* 최소한 원래 막대기 길이보단 크거나 같게 */
+    background-color: var(--bg-darker) !important; /* 전체 다크 배경 코팅 */
+    border-radius: 4px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.9);
+    z-index: 999999;
+}
