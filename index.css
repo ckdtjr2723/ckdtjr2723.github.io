@@ -391,7 +391,7 @@ body {
 
 #subCalendar .event-badge {
     padding: 1px 3px !important;
-    font-size: 10px !important;
+    font-size: 9px !important;
     /* 뱃지 크기 비례 동기화 */
     line-height: 1 !important;
 }
@@ -498,7 +498,7 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
     font-family: var(--font-sans);
     padding: 2px;
 }
@@ -506,7 +506,7 @@ body {
 .custom-event .event-badge {
     background: rgba(255, 255, 255, 0.25);
     color: white;
-    font-size: 14px !important;
+    font-size: 9px !important;
     font-weight: 500;
     padding: 1px 8px;
     border-radius: 10px;
@@ -696,7 +696,7 @@ body {
     flex-direction: row !important;
     /* 가로 배열 절대 보장 */
     align-items: center !important;
-    gap: 5px;
+    gap: 2px;
     width: 100%;
     min-height: 18px !important;
     height: auto !important;
@@ -728,7 +728,7 @@ body {
 
 .event-badge {
     flex-shrink: 0;
-    font-size: 10px !important;
+    font-size: 9px !important;
     padding: 0 5px !important;
     border-radius: 3px !important;
     background: rgba(255, 255, 255, 0.3) !important;
