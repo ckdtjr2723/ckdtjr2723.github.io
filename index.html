@@ -4,53 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>프로젝트 캘린더 대시보드</title>
-    <!-- 폰트: Pretendard -->
+    <!-- 폰트: Pretendard (최적화된 모던 한국어/영문 렌더링 폰트) -->
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-    <!-- FullCalendar Scheduler JS -->
+    <!-- FullCalendar Scheduler JS ( Timeline View ) -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.10/index.global.min.js"></script>
-    <!-- Firebase SDK -->
+    
+    <!-- Firebase SDK (Compat Version for Vanilla JS) -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <!-- 아이콘 폰트 -->
+    
+    <!-- 아이콘 폰트 추가 (FontAwesome) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="index.css">
+
+    <link rel="stylesheet" href="index.css?v=7">
 </head>
 <body>
     <div class="app-container">
+        <!-- 사이드바 (프로젝트 리스트 및 필터) -->
         <aside class="sidebar">
             <div class="brand">
                 <div class="logo"></div>
                 <h1>프로젝트 매니저</h1>
             </div>
-            <button id="addEventBtn" class="btn-primary">새 일정 추가 <span>+</span></button>
+            
+            <button id="addEventBtn" class="btn-primary">
+                새 일정 추가 <span>+</span>
+            </button>
+
             <div class="filter-section">
                 <div class="filter-header">
                     <h3>캘린더 필터</h3>
                     <button id="manageProjectsBtn" class="text-btn">📝 명칭 편집</button>
                 </div>
-                <ul class="project-list" id="projectListContainer"></ul>
+                <!-- 자바스크립트에서 동적으로 채워집니다 -->
+                <ul class="project-list" id="projectListContainer">
+                </ul>
             </div>
         </aside>
+
+        <!-- 메인 캘린더 영역 -->
         <main class="main-content">
             <header class="top-nav">
+                <!-- 기존 "업무 대시보드" 텍스트 삭제 -->
                 <div style="flex:1;"></div>
-                <button id="toggleMatrixBtn" class="btn-primary" style="margin-right: 1.5rem;">
+                
+                <button id="toggleMatrixBtn" class="btn-primary" style="margin-right: 1.5rem; padding: 0.6rem 1.2rem; font-size: 0.9rem;">
                     <i class="fas fa-tasks"></i> 할 일 관리
                 </button>
+                
                 <div class="user-profile">
                     <img src="https://ui-avatars.com/api/?name=Admin&background=8b5cf6&color=fff" alt="User Avatar">
                 </div>
             </header>
+
+            <!-- 1. 프로젝트별 월간 요약 캘린더 (서브 캘린더) 상단 배치 -->
             <div class="sub-calendar-wrapper glass-panel" style="margin-bottom: 1.5rem;">
                 <div id="subCalendar"></div>
             </div>
+
+            <!-- 2. 주 캘린더 (업무 대시보드) 하단 렌더링 -->
             <div class="calendar-wrapper glass-panel">
                 <div id="calendar"></div>
             </div>
         </main>
     </div>
 
-    <!-- 모달 등 나머지 HTML 요소들 (모두 포함되어 있음) -->
+    <!-- 이벤트 추가/수정 모달 -->
     <div id="eventModal" class="modal-overlay hidden">
         <div class="modal glass-panel">
             <div class="modal-header">
@@ -60,36 +79,81 @@
             <form id="eventForm">
                 <input type="hidden" id="eventId">
                 <input type="hidden" id="pendingMatrixId">
+                
                 <div class="form-group">
                     <label>일정 제목</label>
-                    <input type="text" id="eventTitle" required>
+                    <input type="text" id="eventTitle" placeholder="예: 메인 페이지 리뉴얼 배포" required>
                 </div>
-                <div class="form-group" id="calendarSelectGroup">
+                
+                <div class="form-group" id="calendarSelectGroup" style="margin-bottom: 1.2rem;">
                     <label>저장 위치</label>
-                    <select id="eventTargetCalendar" required>
-                        <option value="main">📌 메인 캘린더</option>
-                        <option value="sub">📊 월간 요약 캘린더</option>
-                    </select>
-                </div>
-                <div class="form-row">
-                    <div class="form-group"><label>카테고리</label><select id="eventType"></select></div>
-                    <div class="form-group"><label>프로젝트</label><select id="eventProject"></select></div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group"><label>시작일</label><input type="date" id="eventStart" required></div>
-                    <div class="form-group"><label>종료일</label><input type="date" id="eventEnd">
-                        <div id="ongoingContainer" style="display:none;"><input type="checkbox" id="eventOngoing"> 진행 중</div>
+                    <div class="custom-select">
+                        <select id="eventTargetCalendar" required>
+                            <option value="main">📌 메인 캘린더</option>
+                            <option value="sub">📊 월간 요약 캘린더 (하단)</option>
+                        </select>
                     </div>
                 </div>
-                <div class="form-group" id="importantInputGroup" style="display:none;">
-                    <input type="checkbox" id="eventImportant"> ⭐ 중요 일정
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>카테고리</label>
+                        <div class="custom-select">
+                            <select id="eventType" required>
+                                <option value="회의">🤝 회의</option>
+                                <option value="출장">✈️ 출장</option>
+                                <option value="평가">📊 평가</option>
+                                <option value="납품">🚚 납품</option>
+                                <option value="입고">📦 입고</option>
+                                <option value="일반">📌 일반 (기타)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>프로젝트 (캘린더 선택)</label>
+                        <div class="custom-select">
+                            <!-- 자바스크립트에서 동적으로 채워집니다 -->
+                            <select id="eventProject" required></select>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group" id="timeInputGroup">
-                    <label>지정 시간</label><select id="eventTime"><option value="">지정 안 함</option></select>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>시작일</label>
+                        <input type="date" id="eventStart" required>
+                    </div>
+                    <div class="form-group">
+                        <label>종료일 (선택)</label>
+                        <input type="date" id="eventEnd">
+                        <div id="ongoingContainer" style="display:none; align-items:center; gap:6px; margin-top:8px; font-size:0.85rem; color:rgba(255,255,255,0.7); cursor:pointer;">
+                            <input type="checkbox" id="eventOngoing" style="accent-color:#8b5cf6; width:14px; height:14px; cursor:pointer;">
+                            <span>현재 진행 중</span>
+                        </div>
+                    </div>
                 </div>
+                
+                <div class="form-group" id="importantInputGroup" style="margin-bottom: 1.2rem; display:none;">
+                    <label class="important-toggle" style="display:flex; align-items:center; gap:6px; cursor:pointer; color:#facc15; font-weight:bold;">
+                        <input type="checkbox" id="eventImportant" style="accent-color:#facc15; width:16px; height:16px; cursor:pointer;">
+                        <span>⭐ 중요 일정으로 표시 (메인 캘린더 전용 강조)</span>
+                    </label>
+                </div>
+                
+                <div class="form-group" id="timeInputGroup" style="margin-bottom: 1.2rem;">
+                    <label>지정 시간 (선택)</label>
+                    <div class="custom-select">
+                        <select id="eventTime">
+                            <option value="">지정 안 함</option>
+                        </select>
+                    </div>
+                </div>
+                
                 <div class="form-group">
-                    <label>상세 내용</label><textarea id="eventDescription" rows="3"></textarea>
+                    <label>상세 내용</label>
+                    <textarea id="eventDescription" rows="3" placeholder="일정의 세부적인 사항이나 참고 메모를 입력하세요..."></textarea>
                 </div>
+
                 <div class="modal-actions">
                     <button type="button" id="deleteEventBtn" class="btn-danger hidden">삭제</button>
                     <button type="submit" class="btn-primary" style="flex:1;">저장하기</button>
@@ -97,10 +161,69 @@
             </form>
         </div>
     </div>
-    
-    <!-- 아이젠하워 매트릭스 및 기타 모달 생략 (코드 보존) -->
-    <div id="matrixDrawer" class="matrix-drawer glass-panel">...</div>
-    
-    <script src="app.js"></script>
+
+    <!-- 캘린더 명칭 관리 모달 -->
+    <div id="projectManageModal" class="modal-overlay hidden">
+        <div class="modal glass-panel">
+            <div class="modal-header">
+                <h3>캘린더 명칭 관리</h3>
+                <button id="closeProjModal" class="close-btn">&times;</button>
+            </div>
+            <div id="projectEditContainer" class="form-group-list">
+                <!-- 자바스크립트에서 동적으로 텍스트 인풋이 생성됩니다. -->
+            </div>
+            <button type="button" id="addNewProjectBtn" class="text-btn" style="margin-bottom: 1.5rem; font-size: 0.95rem;">+ 새로운 카테고리 추가</button>
+            <div class="modal-actions">
+                <button type="button" id="saveProjectsBtn" class="btn-primary" style="width: 100%;">이름 변경 저장</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 아이젠하워 매트릭스 (Off-canvas Drawer) -->
+    <div id="matrixOverlay" class="matrix-overlay hidden"></div>
+    <div id="matrixDrawer" class="matrix-drawer glass-panel">
+        <div class="matrix-header">
+            <h3>📝 아이젠하워 매트릭스</h3>
+            <button id="closeMatrixBtn" class="close-btn" style="line-height:1;">&times;</button>
+        </div>
+        
+        <div class="matrix-input-area">
+            <input type="text" id="matrixTaskInput" placeholder="새로운 미정 할 일 입력..." autocomplete="off" />
+            <div class="custom-select" style="min-width: 140px;">
+                <select id="matrixQuadrantSelect">
+                    <option value="q1">🔴 즉시 (중요/긴급)</option>
+                    <option value="q2">🔵 일정 (중요/긴급X)</option>
+                    <option value="q3">🟡 위임 (중요X/긴급)</option>
+                    <option value="q4">⚪ 보류 (중요X/긴급X)</option>
+                </select>
+            </div>
+            <button id="addMatrixTaskBtn" class="btn-primary" style="padding: 0 1rem; border-radius:8px;">+</button>
+        </div>
+
+        <div class="matrix-grid">
+            <div class="quadrant q1" data-quadrant="q1">
+                <h4>DO FIRST (즉시)</h4>
+                <div class="matrix-task-list" id="q1List"></div>
+            </div>
+            <div class="quadrant q2" data-quadrant="q2">
+                <h4>SCHEDULE (일정)</h4>
+                <div class="matrix-task-list" id="q2List"></div>
+            </div>
+            <div class="quadrant q3" data-quadrant="q3">
+                <h4>DELEGATE (위임)</h4>
+                <div class="matrix-task-list" id="q3List"></div>
+            </div>
+            <div class="quadrant q4" data-quadrant="q4">
+                <h4>DON'T DO (보류)</h4>
+                <div class="matrix-task-list" id="q4List"></div>
+            </div>
+        </div>
+        
+        <div class="matrix-footer-note">
+            <i class="fas fa-info-circle"></i> 할 일을 드래그해서 캘린더에 떨어뜨리세요!
+        </div>
+    </div>
+
+    <script src="app.js?v=2"></script>
 </body>
 </html>
