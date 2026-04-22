@@ -6,12 +6,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // 생성한 후, 아래 설정값을 본인의 것으로 교체하세요!
     // =========================================================
     const firebaseConfig = {
-        apiKey: "여기에_API_KEY_입력",
-        authDomain: "여기에_AUTH_DOMAIN_입력",
-        projectId: "여기에_PROJECT_ID_입력",
-        storageBucket: "여기에_STORAGE_BUCKET_입력",
-        messagingSenderId: "여기에_MESSAGING_SENDER_ID_입력",
-        appId: "여기에_APP_ID_입력"
+        apiKey: "AIzaSyDWxaW9mHHgmDuqit1dEXoXN_O8TX48uKs",
+        authDomain: "project-calender-infac.firebaseapp.com",
+        projectId: "project-calender-infac",
+        storageBucket: "project-calender-infac.firebasestorage.app",
+        messagingSenderId: "485522493873",
+        appId: "1:485522493873:web:da50ac413ec955d5396d90"
     };
 
     // Firebase 연동 상태 체크 기능
