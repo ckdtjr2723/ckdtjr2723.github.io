@@ -685,6 +685,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const collectionName = currentTargetCalendar === 'sub' ? "sub_events" : "events";
         const targetCalInstance = currentTargetCalendar === 'sub' ? subCalendar : calendar;
         
+        console.log("📍 저장 위치:", currentTargetCalendar, "| 컬렉션:", collectionName);
+        if (!targetCalInstance) {
+            throw new Error("대상 캘린더 인스턴스를 찾을 수 없습니다. (subCalendar/calendar 확인 필요)");
+        }
+        
         let finalBgColor = 'rgba(51, 65, 85, 0.8)';
 
         const newEventData = {
