@@ -203,9 +203,9 @@ document.addEventListener('DOMContentLoaded', function() {
             else if(foundProj) projAbbrev = foundProj.name.substring(0, 2);
             
             let projBadgeHtml = projAbbrev ? `<span class="event-badge" style="background-color:${projColor} !important; color:var(--bg-darker) !important; font-weight:700; margin-right:4px;">${projAbbrev}</span>` : '';
-            let timeBadgeHtml = timeStr ? `<span style="background-color:rgba(255,255,255,0.25) !important; padding:1px 5px; border-radius:4px; font-size:13px; margin-right:4px;"><i class="far fa-clock"></i> ${timeStr}</span>` : '';
+            let timeBadgeHtml = timeStr ? `<span class="event-time-badge"><i class="far fa-clock"></i> ${timeStr}</span>` : '';
             
-            let titleHtml = `<span style="font-weight:bold;">${title}</span>`;
+            let titleHtml = `<span>${title}</span>`;
             let descHtml = desc ? `<span class="event-desc-text"> - ${desc}</span>` : '';
             let importantHtml = isImportant ? `<span style="color:#facc15; margin-right:4px; font-weight:bold;">⭐</span>` : '';
             
@@ -445,12 +445,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
             let projColor = getProjectColor(projectCode);
             let badgeHtml = type ? `<span class="event-badge" style="background-color:rgba(255,255,255,0.2) !important; color:white !important;">${type}</span>` : '';
-            let titleHtml = `<span style="font-weight:bold; font-size:15px;">${title}</span>`;
-            let descHtml = desc ? `<span class="event-desc-text" style="font-size:14px;"> - ${desc}</span>` : '';
-            let timeBadgeHtml = timeStr ? `<span style="background:rgba(255,255,255,0.25); padding:1px 5px; border-radius:4px; font-size:14px; margin-right:4px;"><i class="far fa-clock"></i> ${timeStr}</span>` : '';
+            let titleHtml = `<span>${title}</span>`;
+            let descHtml = desc ? `<span class="event-desc-text"> - ${desc}</span>` : '';
+            let timeBadgeHtml = timeStr ? `<span class="event-time-badge"><i class="far fa-clock"></i> ${timeStr}</span>` : '';
 
             // 호버 시 나타나는 그룹에 시간, 상세설명, 날짜 포함
-            let detailGroupHtml = `<span class="event-detail-group">${timeBadgeHtml}${descHtml} <span style="opacity:0.8; font-size:14px; font-weight:normal; margin-left:4px;">(${dateText})</span></span>`;
+            let detailGroupHtml = `<span class="event-detail-group">${timeBadgeHtml}${descHtml} <span style="opacity:0.8; font-weight:normal; margin-left:4px;">(${dateText})</span></span>`;
 
             // 서브 캘린더 전용: 왼쪽 색상 지시자 추가 (Bar 형식)
             let colorIndicatorHtml = `<div class="event-color-indicator" style="background-color: ${projColor};"></div>`;

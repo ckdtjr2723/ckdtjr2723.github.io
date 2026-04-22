@@ -742,6 +742,18 @@ body {
     margin: 0 !important;
 }
 
+.event-time-badge {
+    background-color: rgba(255, 255, 255, 0.25) !important;
+    padding: 1px 5px !important;
+    border-radius: 4px !important;
+    font-size: 9px !important;
+    margin-right: 4px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 3px !important;
+    line-height: normal !important;
+}
+
 /* 상세 내용 전용 축소 폰트 */
 .event-desc-text {
     font-size: 11px !important;
