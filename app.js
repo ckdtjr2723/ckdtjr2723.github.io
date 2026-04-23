@@ -696,7 +696,6 @@ document.addEventListener('DOMContentLoaded', function() {
             title: title,
             start: start,
             end: calendarEnd,
-            resourceId: currentTargetCalendar === 'sub' ? project : undefined,
             extendedProps: { 
                 project, eventType, description, isOngoing, isImportant, eventTime,
                 sortTime: getSortTimeVal(eventTime)
@@ -704,6 +703,11 @@ document.addEventListener('DOMContentLoaded', function() {
             backgroundColor: finalBgColor,
             borderColor: finalBgColor
         };
+
+        // 보조 캘린더(Timeline)일 경우에만 resourceId 추가 (Firestore undefined 에러 방지)
+        if (currentTargetCalendar === 'sub') {
+            newEventData.resourceId = project;
+        }
 
         if (isFirebaseActive && db) {
             console.log(`📡 Firebase [${collectionName}]에 데이터 전송 중...`);
