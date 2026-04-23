@@ -747,7 +747,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         } catch (error) {
             console.error("❌ 일정 저장 중 에러 발생:", error);
-            alert("일정 저장 중 오류가 발생했습니다. 브라우저 콘솔을 확인해 주세요.");
+            alert("일정 저장 중 오류가 발생했습니다.\n\n[상세 내용]: " + error.message + "\n\n(브라우저 콘솔을 확인해 주세요.)");
         }
     });
 
