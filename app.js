@@ -791,8 +791,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateData.resourceId = eventObj.getResources()[0] ? eventObj.getResources()[0].id : null;
             }
             
-            db.collection(collectionName).doc(eventObj.id).update(updateData).catch(err => {
+            // Firestore에 undefined 값이 들어가는 것을 원천 차단
+            const cleanData = JSON.parse(JSON.stringify(updateData));
+            
+            db.collection(collectionName).doc(eventObj.id).update(cleanData).catch(err => {
                 console.error("❌ 일정 위치/크기 업데이트 실패:", err);
+                alert("일정 이동 내용을 서버에 저장하지 못했습니다.\n원인: " + err.message);
             });
         } else {
             if (targetCalendar === 'sub') updateLocalSubEventStore();
