@@ -780,12 +780,19 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateSingleEventStore(eventObj, targetCalendar = 'main') {
         const collectionName = targetCalendar === 'sub' ? "sub_events" : "events";
         if (isFirebaseActive) {
-            db.collection(collectionName).doc(eventObj.id).update({
+            let updateData = {
                 start: eventObj.startStr,
                 end: eventObj.endStr || null,
                 extendedProps: eventObj.extendedProps,
-                backgroundColor: eventObj.backgroundColor,
-                resourceId: targetCalendar === 'sub' ? (eventObj.getResources()[0] ? eventObj.getResources()[0].id : null) : undefined
+                backgroundColor: eventObj.backgroundColor
+            };
+            
+            if (targetCalendar === 'sub') {
+                updateData.resourceId = eventObj.getResources()[0] ? eventObj.getResources()[0].id : null;
+            }
+            
+            db.collection(collectionName).doc(eventObj.id).update(updateData).catch(err => {
+                console.error("❌ 일정 위치/크기 업데이트 실패:", err);
             });
         } else {
             if (targetCalendar === 'sub') updateLocalSubEventStore();
