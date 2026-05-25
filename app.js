@@ -1095,4 +1095,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     renderMatrixTasks(); // 브라우저 로딩 시 매트릭스 상태 초기 복원
 
+    // [추가] 사이드바 토글 기능
+    const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+    const sidebar = document.querySelector('.sidebar');
+    if (toggleSidebarBtn && sidebar) {
+        toggleSidebarBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            // 사이드바 토글 후 넓어진/좁아진 화면 폭에 맞게 캘린더 사이즈 재계산 유도
+            setTimeout(() => {
+                if (calendar) calendar.updateSize();
+                if (subCalendar) subCalendar.updateSize();
+            }, 300);
+        });
+    }
+
 });
