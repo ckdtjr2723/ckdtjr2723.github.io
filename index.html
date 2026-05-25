@@ -16,7 +16,7 @@
     <!-- 아이콘 폰트 추가 (FontAwesome) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <link rel="stylesheet" href="index.css?v=35">
+    <link rel="stylesheet" href="index.css?v=36">
 </head>
 <body>
     <div class="app-container">
@@ -50,9 +50,7 @@
                 </button>
                 <div style="flex:1;"></div>
                 
-                <button id="toggleMatrixBtn" class="btn-primary" style="margin-right: 1.5rem; padding: 0.6rem 1.2rem; font-size: 0.9rem;">
-                    <i class="fas fa-tasks"></i> 할 일 관리
-                </button>
+
                 
                 <div class="user-profile">
                     <img src="https://ui-avatars.com/api/?name=Admin&background=8b5cf6&color=fff" alt="User Avatar">
@@ -67,6 +65,20 @@
             <!-- 2. 주 캘린더 (업무 대시보드) 하단 렌더링 -->
             <div class="calendar-wrapper glass-panel">
                 <div id="calendar"></div>
+            </div>
+
+            <!-- 3. 할 일 메모 (미정 일정 대체) -->
+            <div class="memo-wrapper glass-panel" style="margin-top: 1.5rem; padding: 1.5rem;">
+                <h3 style="margin-bottom: 1rem; color: var(--text-primary);"><i class="fas fa-list-ul"></i> 할 일 메모</h3>
+                <div style="display: flex; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap;">
+                    <select id="memoProject" style="padding: 0.8rem 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white; outline: none; min-width: 140px; font-family: inherit; font-size: 0.95rem;">
+                    </select>
+                    <input type="text" id="memoInput" placeholder="아직 캘린더에 넣기 이른 할 일을 메모하세요..." style="flex:1; min-width: 200px; padding: 0.8rem 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white; outline: none; font-family: inherit; font-size: 0.95rem;">
+                    <button id="addMemoBtn" class="btn-primary" style="padding: 0 1.5rem; white-space: nowrap;">추가</button>
+                </div>
+                <ul id="memoList" style="list-style: none; display: flex; flex-direction: column; gap: 8px;">
+                    <!-- 동적으로 메모 추가됨 -->
+                </ul>
             </div>
         </main>
     </div>
@@ -181,51 +193,8 @@
         </div>
     </div>
 
-    <!-- 아이젠하워 매트릭스 (Off-canvas Drawer) -->
-    <div id="matrixOverlay" class="matrix-overlay hidden"></div>
-    <div id="matrixDrawer" class="matrix-drawer glass-panel">
-        <div class="matrix-header">
-            <h3>📝 아이젠하워 매트릭스</h3>
-            <button id="closeMatrixBtn" class="close-btn" style="line-height:1;">&times;</button>
-        </div>
-        
-        <div class="matrix-input-area">
-            <input type="text" id="matrixTaskInput" placeholder="새로운 미정 할 일 입력..." autocomplete="off" />
-            <div class="custom-select" style="min-width: 140px;">
-                <select id="matrixQuadrantSelect">
-                    <option value="q1">🔴 즉시 (중요/긴급)</option>
-                    <option value="q2">🔵 일정 (중요/긴급X)</option>
-                    <option value="q3">🟡 위임 (중요X/긴급)</option>
-                    <option value="q4">⚪ 보류 (중요X/긴급X)</option>
-                </select>
-            </div>
-            <button id="addMatrixTaskBtn" class="btn-primary" style="padding: 0 1rem; border-radius:8px;">+</button>
-        </div>
 
-        <div class="matrix-grid">
-            <div class="quadrant q1" data-quadrant="q1">
-                <h4>DO FIRST (즉시)</h4>
-                <div class="matrix-task-list" id="q1List"></div>
-            </div>
-            <div class="quadrant q2" data-quadrant="q2">
-                <h4>SCHEDULE (일정)</h4>
-                <div class="matrix-task-list" id="q2List"></div>
-            </div>
-            <div class="quadrant q3" data-quadrant="q3">
-                <h4>DELEGATE (위임)</h4>
-                <div class="matrix-task-list" id="q3List"></div>
-            </div>
-            <div class="quadrant q4" data-quadrant="q4">
-                <h4>DON'T DO (보류)</h4>
-                <div class="matrix-task-list" id="q4List"></div>
-            </div>
-        </div>
-        
-        <div class="matrix-footer-note">
-            <i class="fas fa-info-circle"></i> 할 일을 드래그해서 캘린더에 떨어뜨리세요!
-        </div>
-    </div>
 
-    <script src="app.js?v=47"></script>
+    <script src="app.js?v=49"></script>
 </body>
 </html>

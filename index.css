@@ -59,9 +59,7 @@ body {
 }
 
 .sidebar.collapsed {
-    margin-left: -290px;
-    opacity: 0;
-    pointer-events: none;
+    display: none !important;
 }
 
 .brand {
@@ -263,6 +261,42 @@ body {
 /* 월간 뷰(Month)에서도 주간/목록 뷰처럼 큼직하고 넉넉한 크기를 가져 사이트 전체 스크롤이 자연스럽게 생기도록 셀 최소 높이 강제 보장 */
 #calendar .fc-daygrid-day-frame {
     min-height: 130px !important;
+}
+
+/* =========================================================================
+   메인 캘린더 주말(토, 일) 컬럼 너비 50% 축소 (업무 집중형 레이아웃)
+   ========================================================================= */
+#calendar .fc-col-header,
+#calendar .fc-scrollgrid-sync-table {
+    table-layout: fixed !important;
+    width: 100% !important;
+}
+
+/* FullCalendar가 자동 주입하는 colgroup의 강제 너비 할당을 무시하고 th/td 너비를 우선시하도록 숨김 */
+#calendar colgroup {
+    display: none !important;
+}
+
+/* 주말(토, 일)은 전체 비율의 1/12 (주중의 딱 절반) */
+#calendar th.fc-day-sat,
+#calendar td.fc-day-sat,
+#calendar th.fc-day-sun,
+#calendar td.fc-day-sun {
+    width: calc(100% / 12) !important;
+}
+
+/* 평일(월~금)은 전체 비율의 2/12 (주말의 2배 크기) */
+#calendar th.fc-day-mon,
+#calendar td.fc-day-mon,
+#calendar th.fc-day-tue,
+#calendar td.fc-day-tue,
+#calendar th.fc-day-wed,
+#calendar td.fc-day-wed,
+#calendar th.fc-day-thu,
+#calendar td.fc-day-thu,
+#calendar th.fc-day-fri,
+#calendar td.fc-day-fri {
+    width: calc(100% / 6) !important;
 }
 
 .sub-calendar-wrapper {
@@ -732,6 +766,89 @@ body {
     padding: 0 !important;
     flex: 1 1 auto !important;
     min-width: 0 !important;
+}
+
+/* =========================================================================
+   할 일 메모 (미정 일정) 스타일
+   ========================================================================= */
+
+.memo-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background 0.2s;
+}
+
+.memo-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.memo-item-text {
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    word-break: break-all;
+}
+
+.memo-item-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.memo-item-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: 10px;
+}
+
+.memo-item-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    opacity: 0.6;
+    transition: opacity 0.2s, transform 0.2s;
+}
+.memo-btn-edit { color: #3b82f6; }
+.memo-btn-delete { color: var(--color-issue); }
+.memo-btn-save { color: #10b981; }
+.memo-btn-cancel { color: #94a3b8; }
+
+.memo-item-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.memo-edit-input {
+    flex: 1;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--color-dev);
+    padding: 0.4rem;
+    border-radius: 4px;
+    color: white;
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.memo-edit-select {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--color-dev);
+    padding: 0.4rem;
+    border-radius: 4px;
+    color: white;
+    font-family: inherit;
+}
+
+#memoProject option, .memo-edit-select option {
+    background-color: var(--bg-dark);
+    color: white;
 }
 
 .event-badge {

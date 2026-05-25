@@ -116,6 +116,15 @@ document.addEventListener('DOMContentLoaded', function() {
             select.innerHTML += `<option value="${proj.id}">${proj.name}</option>`;
         });
 
+        // 메모 추가 폼의 프로젝트 셀렉트 박스도 동기화
+        const memoProj = document.getElementById('memoProject');
+        if (memoProj) {
+            memoProj.innerHTML = '';
+            customProjects.forEach(proj => {
+                memoProj.innerHTML += `<option value="${proj.id}">${proj.name}</option>`;
+            });
+        }
+
         bindFilterCheckboxes();
     }
     
@@ -205,18 +214,20 @@ document.addEventListener('DOMContentLoaded', function() {
             let projBadgeHtml = projAbbrev ? `<span class="event-badge" style="background-color:${projColor} !important; color:var(--bg-darker) !important; font-weight:700; margin-right:4px;">${projAbbrev}</span>` : '';
             let timeBadgeHtml = timeStr ? `<span class="event-time-badge"><i class="far fa-clock"></i> ${timeStr}</span>` : '';
             
-            let titleHtml = `<span>${title}</span>`;
-            let descHtml = desc ? `<span class="event-desc-text"> - ${desc}</span>` : '';
+            let titleHtml = `<span style="${isImportant ? 'color:#1e293b !important;' : ''}">${title}</span>`;
+            let descHtml = desc ? `<span class="event-desc-text" style="${isImportant ? 'color:#000000 !important; opacity:1 !important; font-weight:600 !important;' : ''}"> - ${desc}</span>` : '';
             let importantHtml = isImportant ? `<span style="color:#facc15; margin-right:4px; font-weight:bold;">⭐</span>` : '';
             
             // 호버 상세 정보 그룹
             let detailGroupHtml = `<span class="event-detail-group">${timeBadgeHtml}${descHtml}</span>`;
             
-            let badgeHtml = type ? `<span class="event-badge" style="background-color:rgba(255,255,255,0.2) !important; color:white !important; margin-right:4px; font-weight:600;">${type}</span>` : '';
+            let badgeTextColor = isImportant ? '#1e293b' : 'white';
+            let badgeBgColor = isImportant ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.2)';
+            let badgeHtml = type ? `<span class="event-badge" style="background-color:${badgeBgColor} !important; color:${badgeTextColor} !important; margin-right:4px; font-weight:700;">${type}</span>` : '';
             
             // 중요 일정 강조 스타일
             const borderStyle = isImportant ? `border-left:5px solid #facc15 !important; box-shadow: 0 0 10px rgba(250, 204, 21, 0.4);` : `border-left:3px solid ${projColor} !important;`;
-            const bgColor = isImportant ? `background:rgba(250, 204, 21, 0.15) !important;` : `background:rgba(51, 65, 85, 0.8) !important;`;
+            const bgColor = isImportant ? `background:rgba(250, 204, 21, 0.65) !important; color:#1e293b !important;` : `background:rgba(51, 65, 85, 0.8) !important;`;
             
             return { html: `<div class="custom-event" style="display:flex; flex-direction:row; align-items:center; flex-wrap:wrap; padding:2px 4px; overflow:hidden; ${borderStyle} ${bgColor}">${importantHtml}${projBadgeHtml}${badgeHtml}<span class="event-title" style="margin-left:4px;">${titleHtml}${detailGroupHtml}</span></div>` };
         },
@@ -333,7 +344,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         },
         initialView: 'customTimeline',
-        initialDate: new Date(new Date().getFullYear() - 1, 0, 1).toISOString().split('T')[0], 
+        initialDate: formatDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1)), 
         dateIncrement: { months: 3 }, // < > 누르면 분기(3칸) 단위로 이동
         height: 450, 
         expandRows: true, // 모든 행(프로젝트)이 남는 가용 높이를 1/N로 동일한 비율로 꽉 채워 균등 팽창하도록 록업
@@ -998,102 +1009,168 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // =========================================================================
-    //   아이젠하워 매트릭스 로직 (미정 할 일 관리 및 D&D)
+    //   할 일 메모 (미정 일정) 로직
     // =========================================================================
-
-    const matrixDrawer = document.getElementById('matrixDrawer');
-    const matrixOverlay = document.getElementById('matrixOverlay');
-    const toggleMatrixBtn = document.getElementById('toggleMatrixBtn');
-    const closeMatrixBtn = document.getElementById('closeMatrixBtn');
-    const addMatrixTaskBtn = document.getElementById('addMatrixTaskBtn');
-    const matrixTaskInput = document.getElementById('matrixTaskInput');
-    const matrixQuadrantSelect = document.getElementById('matrixQuadrantSelect');
-
-    function saveMatrixTasks() {
-        localStorage.setItem('matrixTasks', JSON.stringify(matrixTasks));
+    const memoInput = document.getElementById('memoInput');
+    const addMemoBtn = document.getElementById('addMemoBtn');
+    const memoList = document.getElementById('memoList');
+    
+    let memos = [];
+    
+    async function loadMemos() {
+        try {
+            if (typeof firebase !== 'undefined' && firebase.firestore) {
+                const db = firebase.firestore();
+                const snapshot = await db.collection("memos").orderBy("createdAt", "asc").get();
+                memos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            } else {
+                memos = JSON.parse(localStorage.getItem('calendarMemos')) || [];
+            }
+        } catch(e) {
+            console.log("Firebase 메모 로드 실패, 로컬 데이터 사용", e);
+            memos = JSON.parse(localStorage.getItem('calendarMemos')) || [];
+        }
+        renderMemos();
     }
-
-    // 전역(window) 함수 등록으로 HTML 인라인 핸들러(onclick) 내부 호출 허용
-    window.deleteMatrixTask = function(id, skipConfirm = false) {
-        if (!skipConfirm && !confirm('해당 미설정 할 일을 포기/삭제 하시겠습니까?')) return;
-        matrixTasks = matrixTasks.filter(t => t.id !== id);
-        saveMatrixTasks();
-        renderMatrixTasks();
-    };
-
-    function renderMatrixTasks() {
-        ['q1', 'q2', 'q3', 'q4'].forEach(q => {
-            const listEl = document.getElementById(`${q}List`);
-            if(!listEl) return;
-            listEl.innerHTML = '';
+    
+    function renderMemos() {
+        if(!memoList) return;
+        memoList.innerHTML = '';
+        memos.forEach(memo => {
+            const li = document.createElement('li');
+            li.className = 'memo-item';
             
-            const tasksInQ = matrixTasks.filter(t => t.quadrant === q);
-            tasksInQ.forEach(task => {
-                const item = document.createElement('div');
-                item.className = 'matrix-item fc-event'; // 드래그 가능 속성 연결(FullCalendar ThirdPartyDraggable 호환성)
-                item.dataset.id = task.id;
-                item.dataset.title = task.title;
-                item.innerHTML = `
-                    <div class="matrix-item-content" title="${task.title}">${task.title}</div>
-                    <button class="matrix-item-delete" onclick="window.deleteMatrixTask('${task.id}')"><i class="fas fa-trash"></i></button>
-                `;
-                listEl.appendChild(item);
-            });
-        });
-    }
+            let projCode = memo.project;
+            let projColor = getProjectColor(projCode);
+            let projAbbrev = '';
+            
+            const foundProj = customProjects.find(p => p.id === projCode);
+            if (foundProj && foundProj.abbrev) {
+                projAbbrev = foundProj.abbrev;
+            } else if (foundProj) {
+                projAbbrev = foundProj.name.substring(0, 2);
+            }
+            
+            let badgeHtml = projAbbrev ? `<span class="event-badge" style="background-color:${projColor} !important; color:var(--bg-darker) !important; font-weight:700; margin-right:4px;">${projAbbrev}</span>` : '';
 
-    if (addMatrixTaskBtn) {
-        addMatrixTaskBtn.addEventListener('click', () => {
-            const title = matrixTaskInput.value.trim();
-            if (!title) return;
-            const newTask = {
-                id: 'mtx_' + Date.now(),
-                title: title,
-                quadrant: matrixQuadrantSelect.value
-            };
-            matrixTasks.push(newTask);
-            saveMatrixTasks();
-            renderMatrixTasks();
-            matrixTaskInput.value = '';
+            li.innerHTML = `
+                <div class="memo-item-content" id="memo_content_${memo.id}">
+                    ${badgeHtml}
+                    <span class="memo-item-text">${memo.text.replace(/</g, '&lt;')}</span>
+                </div>
+                <div class="memo-item-actions" id="memo_actions_${memo.id}">
+                    <button class="memo-item-btn memo-btn-edit" onclick="window.editMemo('${memo.id}')" title="수정"><i class="fas fa-edit"></i></button>
+                    <button class="memo-item-btn memo-btn-delete" onclick="window.deleteMemo('${memo.id}')" title="삭제"><i class="fas fa-times"></i></button>
+                </div>
+            `;
+            memoList.appendChild(li);
         });
     }
     
-    if (matrixTaskInput) {
-        matrixTaskInput.addEventListener('keypress', (e) => {
-            if(e.key === 'Enter') addMatrixTaskBtn.click();
+    window.editMemo = function(id) {
+        const memo = memos.find(m => m.id === id);
+        if(!memo) return;
+        
+        const contentDiv = document.getElementById(`memo_content_${id}`);
+        const actionsDiv = document.getElementById(`memo_actions_${id}`);
+        
+        let projOptions = '';
+        customProjects.forEach(p => {
+            const selected = (memo.project === p.id) ? 'selected' : '';
+            projOptions += `<option value="${p.id}" ${selected}>${p.name}</option>`;
         });
-    }
 
-    if (toggleMatrixBtn) {
-        toggleMatrixBtn.addEventListener('click', () => {
-            matrixDrawer.classList.add('active');
-            matrixOverlay.classList.add('active');
-            renderMatrixTasks();
-        });
-    }
-
-    const closeMatrix = () => {
-        matrixDrawer.classList.remove('active');
-        matrixOverlay.classList.remove('active');
+        contentDiv.innerHTML = `
+            <select class="memo-edit-select" id="edit_proj_${id}">${projOptions}</select>
+            <input type="text" class="memo-edit-input" id="edit_input_${id}" value="${memo.text.replace(/"/g, '&quot;')}">
+        `;
+        
+        actionsDiv.innerHTML = `
+            <button class="memo-item-btn memo-btn-save" onclick="window.saveEditMemo('${id}')" title="저장"><i class="fas fa-check"></i></button>
+            <button class="memo-item-btn memo-btn-cancel" onclick="renderMemos()" title="취소"><i class="fas fa-times"></i></button>
+        `;
     };
-    if (closeMatrixBtn) closeMatrixBtn.addEventListener('click', closeMatrix);
-    if (matrixOverlay) matrixOverlay.addEventListener('click', closeMatrix);
-
-    // Draggable 플러그인 초기화 (외부 DOM 요소를 캘린더 엔진에 드래그 가능하게 바인딩)
-    if (document.querySelector('.matrix-grid')) {
-        new FullCalendar.Draggable(document.querySelector('.matrix-grid'), {
-            itemSelector: '.matrix-item',
-            eventData: function(eventEl) {
-                return {
-                    id: eventEl.dataset.id,
-                    title: eventEl.dataset.title,
-                    create: true // 달력 위에 드롭하는 즉시 새로운 Event 객체로 승격 생성
-                };
+    
+    window.saveEditMemo = async function(id) {
+        const memo = memos.find(m => m.id === id);
+        if(!memo) return;
+        
+        const newProj = document.getElementById(`edit_proj_${id}`).value;
+        const newText = document.getElementById(`edit_input_${id}`).value.trim();
+        if(!newText) return;
+        
+        memo.project = newProj;
+        memo.text = newText;
+        
+        try {
+            if (typeof firebase !== 'undefined' && firebase.firestore && !id.toString().startsWith('memo_')) {
+                const db = firebase.firestore();
+                await db.collection("memos").doc(id).update({
+                    project: newProj,
+                    text: newText
+                });
+            }
+        } catch(e) {
+            console.error("메모 수정 실패", e);
+        }
+        localStorage.setItem('calendarMemos', JSON.stringify(memos));
+        renderMemos();
+    };
+    
+    async function addMemo(text, project) {
+        const newMemo = { text: text, project: project, createdAt: new Date().getTime() };
+        try {
+            if (typeof firebase !== 'undefined' && firebase.firestore) {
+                const db = firebase.firestore();
+                const docRef = await db.collection("memos").add(newMemo);
+                newMemo.id = docRef.id;
+            } else {
+                newMemo.id = 'memo_' + Date.now();
+            }
+        } catch (e) {
+            console.error("메모 저장 실패", e);
+            newMemo.id = 'memo_' + Date.now();
+        }
+        memos.push(newMemo);
+        localStorage.setItem('calendarMemos', JSON.stringify(memos)); // Fallback
+        renderMemos();
+    }
+    
+    window.deleteMemo = async function(id) {
+        if(!confirm('이 할 일을 삭제하시겠습니까?')) return;
+        try {
+            if (typeof firebase !== 'undefined' && firebase.firestore && !id.toString().startsWith('memo_')) {
+                const db = firebase.firestore();
+                await db.collection("memos").doc(id).delete();
+            }
+        } catch(e) {
+            console.error("메모 삭제 실패", e);
+        }
+        memos = memos.filter(m => m.id !== id);
+        localStorage.setItem('calendarMemos', JSON.stringify(memos));
+        renderMemos();
+    };
+    
+    if (addMemoBtn) {
+        addMemoBtn.addEventListener('click', () => {
+            const text = memoInput.value.trim();
+            const projSelect = document.getElementById('memoProject');
+            const proj = projSelect ? projSelect.value : (customProjects.length > 0 ? customProjects[0].id : '');
+            if(text) {
+                addMemo(text, proj);
+                memoInput.value = '';
             }
         });
     }
-
-    renderMatrixTasks(); // 브라우저 로딩 시 매트릭스 상태 초기 복원
+    
+    if (memoInput) {
+        memoInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addMemoBtn.click();
+        });
+    }
+    
+    // 초기 로딩
+    loadMemos();
 
     // [추가] 사이드바 토글 기능
     const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
