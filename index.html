@@ -16,7 +16,7 @@
     <!-- 아이콘 폰트 추가 (FontAwesome) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <link rel="stylesheet" href="index.css?v=36">
+    <link rel="stylesheet" href="index.css?v=37">
 </head>
 <body>
     <div class="app-container">
@@ -147,11 +147,22 @@
                     </div>
                 </div>
                 
-                <div class="form-group" id="importantInputGroup" style="margin-bottom: 1.2rem; display:none;">
-                    <label class="important-toggle" style="display:flex; align-items:center; gap:6px; cursor:pointer; color:#facc15; font-weight:bold;">
-                        <input type="checkbox" id="eventImportant" style="accent-color:#facc15; width:16px; height:16px; cursor:pointer;">
-                        <span>⭐ 중요 일정</span>
-                    </label>
+                <div style="display:flex; gap:20px; align-items:center; margin-bottom: 1.2rem;">
+                    <div class="form-group" id="importantInputGroup" style="margin-bottom:0; display:none;">
+                        <label class="custom-checkbox" style="color:#facc15; font-weight:bold;">
+                            <input type="checkbox" id="eventImportant">
+                            <span class="checkmark" style="display:inline-block !important; width:16px !important; height:16px !important; min-width:16px !important; flex-shrink:0; border:2px solid #facc15; border-radius:4px; --checked-bg:#facc15;"></span>
+                            ⭐ 중요 일정
+                        </label>
+                    </div>
+                    
+                    <div class="form-group" id="holidayInputGroup" style="margin-bottom:0;">
+                        <label class="custom-checkbox" style="color:#ef4444; font-weight:bold;">
+                            <input type="checkbox" id="eventHoliday">
+                            <span class="checkmark" style="display:inline-block !important; width:16px !important; height:16px !important; min-width:16px !important; flex-shrink:0; border:2px solid #ef4444; border-radius:4px; --checked-bg:#ef4444;"></span>
+                            🏖️ 공휴일 지정
+                        </label>
+                    </div>
                 </div>
                 
                 <div class="form-group" id="timeInputGroup" style="margin-bottom: 1.2rem;">

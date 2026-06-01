@@ -213,21 +213,30 @@ document.addEventListener('DOMContentLoaded', function() {
             
             let projBadgeHtml = projAbbrev ? `<span class="event-badge" style="background-color:${projColor} !important; color:var(--bg-darker) !important; font-weight:700; margin-right:4px;">${projAbbrev}</span>` : '';
             let timeBadgeHtml = timeStr ? `<span class="event-time-badge"><i class="far fa-clock"></i> ${timeStr}</span>` : '';
+            let isHoliday = arg.event.extendedProps.isHoliday || false;
             
-            let titleHtml = `<span style="${isImportant ? 'color:#1e293b !important;' : ''}">${title}</span>`;
-            let descHtml = desc ? `<span class="event-desc-text" style="${isImportant ? 'color:#000000 !important; opacity:1 !important; font-weight:600 !important;' : ''}"> - ${desc}</span>` : '';
+            let titleColor = isHoliday ? 'color:#ef4444 !important; font-weight:800 !important;' : (isImportant ? 'color:#1e293b !important;' : '');
+            let titleHtml = `<span style="${titleColor}">${title}</span>`;
+            
+            let descColor = isHoliday ? 'color:#f87171 !important; opacity:1 !important;' : (isImportant ? 'color:#000000 !important; opacity:1 !important; font-weight:600 !important;' : '');
+            let descHtml = desc ? `<span class="event-desc-text" style="${descColor}"> - ${desc}</span>` : '';
             let importantHtml = isImportant ? `<span style="color:#facc15; margin-right:4px; font-weight:bold;">⭐</span>` : '';
             
             // 호버 상세 정보 그룹
             let detailGroupHtml = `<span class="event-detail-group">${timeBadgeHtml}${descHtml}</span>`;
             
-            let badgeTextColor = isImportant ? '#1e293b' : 'white';
-            let badgeBgColor = isImportant ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.2)';
+            let badgeTextColor = isHoliday ? 'white' : (isImportant ? '#1e293b' : 'white');
+            let badgeBgColor = isHoliday ? '#ef4444' : (isImportant ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.2)');
             let badgeHtml = type ? `<span class="event-badge" style="background-color:${badgeBgColor} !important; color:${badgeTextColor} !important; margin-right:4px; font-weight:700;">${type}</span>` : '';
             
-            // 중요 일정 강조 스타일
-            const borderStyle = isImportant ? `border-left:5px solid #facc15 !important; box-shadow: 0 0 10px rgba(250, 204, 21, 0.4);` : `border-left:3px solid ${projColor} !important;`;
-            const bgColor = isImportant ? `background:rgba(250, 204, 21, 0.65) !important; color:#1e293b !important;` : `background:rgba(51, 65, 85, 0.8) !important;`;
+            if (isHoliday) {
+                // 막대기(배경색) 없이 텍스트만 표시되도록 렌더링
+                return { html: `<div style="text-align:center; padding-top:2px; font-weight:800; color:#ef4444; width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${title}">🏖️ ${title}</div>` };
+            }
+            
+            // 중요 일정 및 일반 일정 강조 스타일
+            let borderStyle = isImportant ? `border-left:5px solid #facc15 !important; box-shadow: 0 0 10px rgba(250, 204, 21, 0.4);` : `border-left:3px solid ${projColor} !important;`;
+            let bgColor = isImportant ? `background:rgba(250, 204, 21, 0.65) !important; color:#1e293b !important;` : `background:rgba(51, 65, 85, 0.8) !important;`;
             
             return { html: `<div class="custom-event" style="display:flex; flex-direction:row; align-items:center; flex-wrap:wrap; padding:2px 4px; overflow:hidden; ${borderStyle} ${bgColor}">${importantHtml}${projBadgeHtml}${badgeHtml}<span class="event-title" style="margin-left:4px;">${titleHtml}${detailGroupHtml}</span></div>` };
         },
@@ -260,6 +269,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const importantCb = document.getElementById('eventImportant');
             if(importantCb) importantCb.checked = isImportant;
             
+            const isHoliday = event.extendedProps.isHoliday || false;
+            const holidayCb = document.getElementById('eventHoliday');
+            if(holidayCb) holidayCb.checked = isHoliday;
+            
             document.getElementById('eventStart').value = event.startStr.split('T')[0];
             if (event.end && !isOngoing) {
                 const end = new Date(event.end);
@@ -277,6 +290,76 @@ document.addEventListener('DOMContentLoaded', function() {
         eventResize: function(info) { 
             info.event.setProp('backgroundColor', 'rgba(51, 65, 85, 0.8)');
             updateSingleEventStore(info.event, 'main'); 
+        },
+        eventDidMount: function(info) {
+            if (info.event.extendedProps.isHoliday) {
+                // 이벤트 자체의 막대기 배경과 테두리를 완벽하게 투명화
+                info.el.style.backgroundColor = 'transparent';
+                info.el.style.borderColor = 'transparent';
+                info.el.style.boxShadow = 'none';
+                
+                let start = info.event.start;
+                if (!start) return;
+                
+                let currentDate = new Date(start.getTime());
+                currentDate.setHours(0,0,0,0);
+                
+                let end = info.event.end;
+                let endDate = end ? new Date(end.getTime()) : new Date(currentDate.getTime() + 86400000);
+                endDate.setHours(0,0,0,0);
+                
+                if (currentDate.getTime() === endDate.getTime()) {
+                    endDate = new Date(currentDate.getTime() + 86400000);
+                }
+
+                // 장기간(다중 일자) 공휴일인 경우를 대비하여 반복하며 색상 적용
+                while (currentDate < endDate) {
+                    let y = currentDate.getFullYear();
+                    let m = String(currentDate.getMonth() + 1).padStart(2, '0');
+                    let d = String(currentDate.getDate()).padStart(2, '0');
+                    let dateStr = `${y}-${m}-${d}`;
+                    
+                    let td = document.querySelector(`.fc-daygrid-day[data-date="${dateStr}"]`);
+                    if (td) {
+                        let frame = td.querySelector('.fc-daygrid-day-frame');
+                        if (frame) frame.style.backgroundColor = 'rgba(239, 68, 68, 0.15)';
+                        else td.style.backgroundColor = 'rgba(239, 68, 68, 0.15)';
+                    }
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+            }
+        },
+        eventWillUnmount: function(info) {
+            if (info.event.extendedProps.isHoliday) {
+                let start = info.event.start;
+                if (!start) return;
+                
+                let currentDate = new Date(start.getTime());
+                currentDate.setHours(0,0,0,0);
+                
+                let end = info.event.end;
+                let endDate = end ? new Date(end.getTime()) : new Date(currentDate.getTime() + 86400000);
+                endDate.setHours(0,0,0,0);
+                
+                if (currentDate.getTime() === endDate.getTime()) {
+                    endDate = new Date(currentDate.getTime() + 86400000);
+                }
+
+                while (currentDate < endDate) {
+                    let y = currentDate.getFullYear();
+                    let m = String(currentDate.getMonth() + 1).padStart(2, '0');
+                    let d = String(currentDate.getDate()).padStart(2, '0');
+                    let dateStr = `${y}-${m}-${d}`;
+                    
+                    let td = document.querySelector(`.fc-daygrid-day[data-date="${dateStr}"]`);
+                    if (td) {
+                        let frame = td.querySelector('.fc-daygrid-day-frame');
+                        if (frame) frame.style.backgroundColor = '';
+                        td.style.backgroundColor = '';
+                    }
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+            }
         }
     });
 
@@ -611,6 +694,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if(ongoingCb) ongoingCb.checked = false;
             const importantCb = document.getElementById('eventImportant');
             if(importantCb) importantCb.checked = false;
+            const holidayCb = document.getElementById('eventHoliday');
+            if(holidayCb) holidayCb.checked = false;
             if(endInput) endInput.disabled = false;
         }
         
@@ -680,6 +765,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let calendarEnd = null;
         const isOngoing = document.getElementById('eventOngoing').checked;
         const isImportant = document.getElementById('eventImportant').checked;
+        const isHoliday = document.getElementById('eventHoliday') ? document.getElementById('eventHoliday').checked : false;
         
         if (isOngoing) {
             // 진행 중인 일정이면 캘린더 엔진상 가상의 종료일을 내일 자정으로 처리 (오늘까지 계속 그려지도록)
@@ -708,7 +794,7 @@ document.addEventListener('DOMContentLoaded', function() {
             start: start,
             end: calendarEnd,
             extendedProps: { 
-                project, eventType, description, isOngoing, isImportant, eventTime,
+                project, eventType, description, isOngoing, isImportant, isHoliday, eventTime,
                 sortTime: getSortTimeVal(eventTime)
             },
             backgroundColor: finalBgColor,
