@@ -283,82 +283,38 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         },
         eventDrop: function(info) { 
-            // 메인 캘린더는 다시 원래대로 중립 배경색 사용 (뱃지형)
-            info.event.setProp('backgroundColor', 'rgba(51, 65, 85, 0.8)');
+            if (info.event.extendedProps.isHoliday) {
+                info.event.setProp('backgroundColor', 'transparent');
+                info.event.setProp('borderColor', 'transparent');
+                colorHolidayCells(info.oldEvent, false);
+                colorHolidayCells(info.event, true);
+            } else {
+                info.event.setProp('backgroundColor', 'rgba(51, 65, 85, 0.8)');
+            }
             updateSingleEventStore(info.event, 'main'); 
         },
         eventResize: function(info) { 
-            info.event.setProp('backgroundColor', 'rgba(51, 65, 85, 0.8)');
+            if (info.event.extendedProps.isHoliday) {
+                info.event.setProp('backgroundColor', 'transparent');
+                info.event.setProp('borderColor', 'transparent');
+                colorHolidayCells(info.oldEvent, false);
+                colorHolidayCells(info.event, true);
+            } else {
+                info.event.setProp('backgroundColor', 'rgba(51, 65, 85, 0.8)');
+            }
             updateSingleEventStore(info.event, 'main'); 
         },
         eventDidMount: function(info) {
             if (info.event.extendedProps.isHoliday) {
-                // 이벤트 자체의 막대기 배경과 테두리를 완벽하게 투명화
                 info.el.style.backgroundColor = 'transparent';
                 info.el.style.borderColor = 'transparent';
                 info.el.style.boxShadow = 'none';
-                
-                let start = info.event.start;
-                if (!start) return;
-                
-                let currentDate = new Date(start.getTime());
-                currentDate.setHours(0,0,0,0);
-                
-                let end = info.event.end;
-                let endDate = end ? new Date(end.getTime()) : new Date(currentDate.getTime() + 86400000);
-                endDate.setHours(0,0,0,0);
-                
-                if (currentDate.getTime() === endDate.getTime()) {
-                    endDate = new Date(currentDate.getTime() + 86400000);
-                }
-
-                // 장기간(다중 일자) 공휴일인 경우를 대비하여 반복하며 색상 적용
-                while (currentDate < endDate) {
-                    let y = currentDate.getFullYear();
-                    let m = String(currentDate.getMonth() + 1).padStart(2, '0');
-                    let d = String(currentDate.getDate()).padStart(2, '0');
-                    let dateStr = `${y}-${m}-${d}`;
-                    
-                    let td = document.querySelector(`.fc-daygrid-day[data-date="${dateStr}"]`);
-                    if (td) {
-                        let frame = td.querySelector('.fc-daygrid-day-frame');
-                        if (frame) frame.style.backgroundColor = 'rgba(239, 68, 68, 0.15)';
-                        else td.style.backgroundColor = 'rgba(239, 68, 68, 0.15)';
-                    }
-                    currentDate.setDate(currentDate.getDate() + 1);
-                }
+                colorHolidayCells(info.event, true);
             }
         },
         eventWillUnmount: function(info) {
             if (info.event.extendedProps.isHoliday) {
-                let start = info.event.start;
-                if (!start) return;
-                
-                let currentDate = new Date(start.getTime());
-                currentDate.setHours(0,0,0,0);
-                
-                let end = info.event.end;
-                let endDate = end ? new Date(end.getTime()) : new Date(currentDate.getTime() + 86400000);
-                endDate.setHours(0,0,0,0);
-                
-                if (currentDate.getTime() === endDate.getTime()) {
-                    endDate = new Date(currentDate.getTime() + 86400000);
-                }
-
-                while (currentDate < endDate) {
-                    let y = currentDate.getFullYear();
-                    let m = String(currentDate.getMonth() + 1).padStart(2, '0');
-                    let d = String(currentDate.getDate()).padStart(2, '0');
-                    let dateStr = `${y}-${m}-${d}`;
-                    
-                    let td = document.querySelector(`.fc-daygrid-day[data-date="${dateStr}"]`);
-                    if (td) {
-                        let frame = td.querySelector('.fc-daygrid-day-frame');
-                        if (frame) frame.style.backgroundColor = '';
-                        td.style.backgroundColor = '';
-                    }
-                    currentDate.setDate(currentDate.getDate() + 1);
-                }
+                colorHolidayCells(info.event, false);
             }
         }
     });
