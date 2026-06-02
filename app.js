@@ -153,6 +153,10 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         buttonText: { today: '오늘', month: '월간', week: '주간', list: '목록' },
         eventOrder: function(a, b) {
+            let isHolA = (a.extendedProps && a.extendedProps.isHoliday) ? 1 : 0;
+            let isHolB = (b.extendedProps && b.extendedProps.isHoliday) ? 1 : 0;
+            if (isHolA !== isHolB) return isHolB - isHolA; // 공휴일(1)을 일반(0)보다 우선 정렬
+
             let startA = a.start ? a.start.valueOf() : 0;
             let startB = b.start ? b.start.valueOf() : 0;
             if (startA !== startB) return startA - startB;
@@ -286,38 +290,95 @@ document.addEventListener('DOMContentLoaded', function() {
             if (info.event.extendedProps.isHoliday) {
                 info.event.setProp('backgroundColor', 'transparent');
                 info.event.setProp('borderColor', 'transparent');
-                colorHolidayCells(info.oldEvent, false);
-                colorHolidayCells(info.event, true);
             } else {
                 info.event.setProp('backgroundColor', 'rgba(51, 65, 85, 0.8)');
             }
             updateSingleEventStore(info.event, 'main'); 
+            triggerHolidayPaint();
         },
         eventResize: function(info) { 
             if (info.event.extendedProps.isHoliday) {
                 info.event.setProp('backgroundColor', 'transparent');
                 info.event.setProp('borderColor', 'transparent');
-                colorHolidayCells(info.oldEvent, false);
-                colorHolidayCells(info.event, true);
             } else {
                 info.event.setProp('backgroundColor', 'rgba(51, 65, 85, 0.8)');
             }
             updateSingleEventStore(info.event, 'main'); 
+            triggerHolidayPaint();
         },
         eventDidMount: function(info) {
             if (info.event.extendedProps.isHoliday) {
                 info.el.style.backgroundColor = 'transparent';
                 info.el.style.borderColor = 'transparent';
                 info.el.style.boxShadow = 'none';
-                colorHolidayCells(info.event, true);
+                triggerHolidayPaint();
             }
         },
         eventWillUnmount: function(info) {
             if (info.event.extendedProps.isHoliday) {
-                colorHolidayCells(info.event, false);
+                triggerHolidayPaint();
             }
         }
     });
+
+    // --- 공휴일 배경색 일괄 렌더링 함수 ---
+    let holidayPaintTimer = null;
+    function triggerHolidayPaint() {
+        if (holidayPaintTimer) clearTimeout(holidayPaintTimer);
+        holidayPaintTimer = setTimeout(() => {
+            // 1. 기존에 칠해진 커스텀 배경 모두 제거
+            document.querySelectorAll('.custom-holiday-bg').forEach(el => el.remove());
+            
+            // 2. 현재 달력에 로드된 모든 공휴일 이벤트 조회 후 전체 다시 칠하기
+            let events = calendar.getEvents();
+            events.forEach(ev => {
+                if (ev.extendedProps.isHoliday) {
+                    let start = ev.start;
+                    if (!start) return;
+                    
+                    let currentDate = new Date(start.getTime());
+                    currentDate.setHours(0,0,0,0);
+                    
+                    let end = ev.end;
+                    let endDate = end ? new Date(end.getTime()) : new Date(currentDate.getTime() + 86400000);
+                    endDate.setHours(0,0,0,0);
+                    
+                    if (currentDate.getTime() === endDate.getTime()) {
+                        endDate = new Date(currentDate.getTime() + 86400000);
+                    }
+
+                    while (currentDate < endDate) {
+                        let y = currentDate.getFullYear();
+                        let m = String(currentDate.getMonth() + 1).padStart(2, '0');
+                        let d = String(currentDate.getDate()).padStart(2, '0');
+                        let dateStr = `${y}-${m}-${d}`;
+                        
+                        let td = document.querySelector(`.fc-daygrid-day[data-date="${dateStr}"]`);
+                        if (td) {
+                            if (!td.querySelector('.custom-holiday-bg')) {
+                                let bg = document.createElement('div');
+                                bg.className = 'custom-holiday-bg';
+                                bg.style.position = 'absolute';
+                                bg.style.top = '0';
+                                bg.style.left = '0';
+                                bg.style.right = '0';
+                                bg.style.bottom = '0';
+                                bg.style.backgroundColor = 'rgba(239, 68, 68, 0.15)';
+                                bg.style.zIndex = '0';
+                                bg.style.pointerEvents = 'none';
+                                
+                                if (window.getComputedStyle(td).position === 'static') {
+                                    td.style.position = 'relative';
+                                }
+                                td.insertBefore(bg, td.firstChild);
+                            }
+                        }
+                        currentDate.setDate(currentDate.getDate() + 1);
+                    }
+                }
+            });
+        }, 30);
+    }
 
     calendar.render();
 
