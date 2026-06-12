@@ -171,6 +171,17 @@ document.addEventListener('DOMContentLoaded', function() {
             let tB = (b.extendedProps && b.extendedProps.sortTime !== undefined) ? b.extendedProps.sortTime : 9999;
             if (tA !== tB) return tA - tB;
 
+            // 프로젝트 순서별 정렬 (시간이 없거나 동일할 경우, 좌측 프로젝트 리스트 순서대로 묶음)
+            let projA = (a.extendedProps && a.extendedProps.project) || '';
+            let projB = (b.extendedProps && b.extendedProps.project) || '';
+            if (projA !== projB) {
+                let idxA = customProjects.findIndex(p => p.id === projA);
+                let idxB = customProjects.findIndex(p => p.id === projB);
+                if (idxA === -1) idxA = 999; // 프로젝트를 못 찾으면 맨 뒤로
+                if (idxB === -1) idxB = 999;
+                if (idxA !== idxB) return idxA - idxB;
+            }
+
             let titleA = a.title || '';
             let titleB = b.title || '';
             return titleA.localeCompare(titleB);
